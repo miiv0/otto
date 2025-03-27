@@ -1,6 +1,6 @@
 import { readdir } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   Client,
   Collection,
@@ -30,7 +30,9 @@ const loadCommands = async (dir = "./commands") => {
   return commands;
 };
 
-const registerCommands = async (commands, token, clientId, guildId = null) => {
+const registerCommands = async (token, clientId, guildId = null) => {
+  const commands = await loadCommands();
+
   const rest = new REST().setToken(token);
 
   try {
@@ -43,6 +45,8 @@ const registerCommands = async (commands, token, clientId, guildId = null) => {
   } catch (error) {
     console.error(error);
   }
+
+  return commands;
 };
 
 const run = async () => {
@@ -58,8 +62,19 @@ const run = async () => {
     intents: [GatewayIntentBits.GuildVoiceStates],
   });
 
-  const commands = await loadCommands();
-  await registerCommands(commands, token, clientId, guildId);
+  const commands = await registerCommands(token, clientId, guildId);
+
+  client.on("interactionCreate", async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const command = commands.get(interaction.commandName);
+
+    try {
+      await command?.execute(interaction);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   await client.login(token);
 };
