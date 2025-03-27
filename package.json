@@ -1,8 +1,16 @@
 {
-	"name": "otto",
-	"version": "1.0.0",
-	"type": "module",
-	"scripts": {
-		"start": "node ./src/index.js"
-	}
+  "name": "otto",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "node --watch ./src/index.js",
+    "lint": "biome lint --write ./src"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }
