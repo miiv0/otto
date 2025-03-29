@@ -60,6 +60,7 @@ export class YouTubeTrackResolver {
               }
             : null,
           image: video.basic_info.thumbnail[0]?.url ?? null,
+          youtube: { id },
         };
       }
       case "search": {
@@ -80,6 +81,7 @@ export class YouTubeTrackResolver {
               }
             : null,
           image: video.thumbnails[0]?.url ?? null,
+          youtube: { id: video.id },
         };
       }
     }
