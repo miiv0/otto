@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
+import { createTrackEmbed } from "../embeds.js";
 import { resolveQuery } from "../resolver/index.js";
 
 export default {
@@ -18,6 +19,8 @@ export default {
     const query = interaction.options.getString("query", true);
     const track = await resolveQuery(query);
 
-    await interaction.editReply(`Playing ${track.title}.`);
+    await interaction.editReply({
+      embeds: [createTrackEmbed(track, { title: "Queued", thumbnail: true })],
+    });
   },
 };
