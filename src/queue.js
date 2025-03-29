@@ -1,12 +1,13 @@
 import { EventEmitter } from "node:events";
-import { Collection } from "discord.js";
 import {
   AudioPlayerStatus,
+  VoiceConnectionStatus,
   createAudioPlayer,
   entersState,
   joinVoiceChannel,
-  VoiceConnectionStatus,
 } from "@discordjs/voice";
+import { Collection } from "discord.js";
+import { downloadTrack } from "./downloader/index.js";
 
 const queues = new Collection();
 
@@ -102,5 +103,15 @@ export default class Queue extends EventEmitter {
     const track = this.tracks.shift();
 
     if (!track) return;
+
+    const audio = await downloadTrack(track);
+
+    if (!audio) {
+      this.#process();
+
+      return;
+    }
+
+    this.#audioPlayer.play(audio);
   }
 }

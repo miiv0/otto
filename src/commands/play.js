@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { createTrackEmbed } from "../embeds.js";
-import { resolveQuery } from "../resolver/index.js";
 import Queue from "../queue.js";
+import { resolveQuery } from "../resolver/index.js";
 
 export default {
   info: new SlashCommandBuilder()
