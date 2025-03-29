@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import {
   Client,
   Collection,
+  Events,
   GatewayIntentBits,
   REST,
   Routes,
@@ -59,12 +60,12 @@ const run = async () => {
     throw Error("Environment variable OTTO_CLIENT_ID must be set.");
 
   const client = new Client({
-    intents: [GatewayIntentBits.GuildVoiceStates],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
   });
 
   const commands = await registerCommands(token, clientId, guildId);
 
-  client.on("interactionCreate", async (interaction) => {
+  client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     const command = commands.get(interaction.commandName);

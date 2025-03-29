@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import { createTrackEmbed } from "../embeds.js";
 import { resolveQuery } from "../resolver/index.js";
+import Queue from "../queue.js";
 
 export default {
   info: new SlashCommandBuilder()
@@ -14,13 +15,42 @@ export default {
     ),
 
   async execute(interaction) {
-    await interaction.deferReply();
+    const voiceChannel = interaction.member.voice?.channel;
 
-    const query = interaction.options.getString("query", true);
-    const track = await resolveQuery(query);
+    if (!voiceChannel) {
+      await interaction.reply({
+        content: "I can't join you unless you're in a voice channel.",
+        ephemeral: true,
+      });
 
-    await interaction.editReply({
-      embeds: [createTrackEmbed(track, { title: "Queued", thumbnail: true })],
-    });
+      return;
+    }
+
+    try {
+      const queue = Queue.join(voiceChannel);
+
+      await interaction.deferReply();
+
+      const query = interaction.options.getString("query", true);
+
+      try {
+        const track = await resolveQuery(query);
+
+        queue.enqueue(track);
+
+        await interaction.editReply({
+          embeds: [
+            createTrackEmbed(track, { title: "Queued", thumbnail: true }),
+          ],
+        });
+      } catch {
+        await interaction.editReply("Oops, I couldn't find anything.");
+      }
+    } catch {
+      await interaction.reply({
+        content: "Oops, I couldn't join the voice channel.",
+        ephemeral: true,
+      });
+    }
   },
 };
