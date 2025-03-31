@@ -25,7 +25,7 @@ export const createTrackEmbed = (track, options = {}) => {
         : null,
     );
 
-  thumbnail ? embed.setThumbnail(track.image) : embed.setThumbnail(track.image);
+  thumbnail ? embed.setThumbnail(track.image) : embed.setImage(track.image);
 
   return embed;
 };

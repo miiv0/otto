@@ -36,14 +36,16 @@ export default {
       try {
         const track = await resolveQuery(query);
 
-        queue.enqueue(track);
+        queue.enqueue({ ...track, interaction });
 
         await interaction.editReply({
           embeds: [
             createTrackEmbed(track, { title: "Queued", thumbnail: true }),
           ],
         });
-      } catch {
+      } catch (error) {
+        console.error(error);
+
         await interaction.editReply("Oops, I couldn't find anything.");
       }
     } catch {

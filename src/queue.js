@@ -1,4 +1,3 @@
-import { EventEmitter } from "node:events";
 import {
   AudioPlayerStatus,
   VoiceConnectionStatus,
@@ -8,21 +7,26 @@ import {
 } from "@discordjs/voice";
 import { Collection } from "discord.js";
 import { downloadTrack } from "./downloader/index.js";
+import { createTrackEmbed } from "./embeds.js";
 
 const queues = new Collection();
 
-export default class Queue extends EventEmitter {
+export default class Queue {
   tracks;
   #audioPlayer;
 
   constructor() {
-    super();
-
     this.tracks = [];
     this.#audioPlayer = createAudioPlayer();
 
     this.#audioPlayer.on("stateChange", async (oldState, newState) => {
-      if (newState.status === AudioPlayerStatus.Idle) {
+      if (newState.status === AudioPlayerStatus.Playing) {
+        const track = newState.resource.metadata;
+
+        await track.interaction?.followUp({
+          embeds: [createTrackEmbed(track, { title: "Now Playing" })],
+        });
+      } else if (newState.status === AudioPlayerStatus.Idle) {
         await this.#process();
       }
     });
@@ -104,14 +108,16 @@ export default class Queue extends EventEmitter {
 
     if (!track) return;
 
-    const audio = await downloadTrack(track);
+    try {
+      const audio = await downloadTrack(track);
 
-    if (!audio) {
+      this.#audioPlayer.play(audio);
+    } catch (error) {
       this.#process();
 
-      return;
+      await track.interaction?.followUp(
+        "Oops! I was unable to play that track.",
+      );
     }
-
-    this.#audioPlayer.play(audio);
   }
 }

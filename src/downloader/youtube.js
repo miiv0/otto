@@ -21,7 +21,7 @@ export class YouTubeTrackDownloader {
     const id = track.youtube?.id ?? null;
 
     if (!id) {
-      throw new Error("Unable to download track audio.");
+      throw new Error("Unable to download audio.");
     }
 
     const youtube = await this.#createSession();
