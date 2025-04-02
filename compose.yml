@@ -1,0 +1,18 @@
+services:
+  otto:
+    build:
+      context: .
+    
+    environment:
+      OTTO_TOKEN: "${OTTO_TOKEN}" # The Discord bot token
+      OTTO_CLIENT_ID: "${OTTO_CLIENT_ID}" # The Discord bot OAuth client ID
+      OTTO_GUILD_ID: "${OTTO_GUILD_ID}" # (Optional) A Discord server ID
+
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./package*.json
+          target: /app
