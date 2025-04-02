@@ -56,6 +56,8 @@ export default class Queue {
     //
     // It's heavily assumed that `VoiceConnection` doesn't rely on its own event
     // listeners internally, which seems to be the case.
+    //
+    // Also, I probably shouldn't be doing this...
     voiceConnection.removeAllListeners();
 
     voiceConnection.on(VoiceConnectionStatus.Disconnected, async () => {
@@ -94,6 +96,23 @@ export default class Queue {
     this.tracks.push(track);
 
     this.#process();
+  }
+
+  skip() {
+    let track = null;
+
+    if (this.#audioPlayer.state.status !== AudioPlayerStatus.Idle) {
+      track = this.#audioPlayer.state.resource.metadata;
+    }
+
+    this.#audioPlayer.stop(true);
+
+    return track;
+  }
+
+  clear() {
+    this.skip();
+    this.tracks = [];
   }
 
   #destroy() {
