@@ -21,6 +21,7 @@ export class YouTubeTrackDownloader {
     const id = track.youtube?.id ?? null;
 
     if (!id) {
+      // TODO: Properly handle this case
       throw new Error("Unable to download audio.");
     }
 

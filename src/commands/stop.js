@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import Queue from "../queue.js";
 
 export default {
@@ -12,7 +12,7 @@ export default {
     if (!voiceChannel) {
       await interaction.reply({
         content: "I can't join you unless you're in a voice channel.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
 
       return;
@@ -25,12 +25,12 @@ export default {
 
       await interaction.reply({
         content: "Stopping playback and clearing the queue.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } catch {
       await interaction.reply({
         content: "Oops, I couldn't join the voice channel.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

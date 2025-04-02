@@ -132,11 +132,13 @@ export default class Queue {
 
       this.#audioPlayer.play(audio);
     } catch (error) {
-      this.#process();
+      console.error(error);
 
       await track.interaction?.followUp(
         "Oops! I was unable to play that track.",
       );
+
+      this.#process();
     }
   }
 }
