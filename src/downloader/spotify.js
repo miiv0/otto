@@ -1,15 +1,8 @@
-import { fetch } from "undici"
+import { fetch } from 'undici'
+import spotifyUrlInfo from 'spotify-url-info'
 
-const token = process.env.SPOTIFY_TOKEN
+const { getData, getPreview, getTracks, getDetails } = spotifyUrlInfo(fetch)
 
-async function searchSpotify(query, token) {
-    const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-
-    })
-    console.log(response)
-};
-
-searchSpotify("hello", token)
+getPreview('https://open.spotify.com/track/5nTtCOCds6I0PHMNtqelas').then(data =>
+    console.log(data)
+)
